@@ -19,16 +19,35 @@ const listContacts = async () => {
     return await readContent()
 }
 
-function getContactById(contactId) {
-  // ...твой код
+const getContactById = async (contactId) => {
+    const contacts = await readContent()
+    const [contact] = contacts.filter(contact => contact.id === contactId)
+    return contact
 }
 
-function removeContact(contactId) {
-  // ...твой код
+const removeContact = async (contactId) => {
+    const contacts = await readContent()
+    const contact = contacts.find((contact) => contact.id === contactId)
+    const filteredContacts = contacts.filter(contact => contact.id !== contactId)
+
+    if (contact) {
+        await fs.writeFile(
+            path.join(__dirname, 'db', 'contacts.json'),
+            JSON.stringify(filteredContacts, null, 2),
+        )
+        return filteredContacts
+    }
 }
 
-function addContact(name, email, phone) {
-  // ...твой код
+const addContact = async (name, email, phone) => {
+    const contacts = await readContent()
+    const newContact = { name, email, phone, id: crypto.randomUUID() }
+    contacts.push(newContact)
+    await fs.writeFile(
+        path.join(__dirname, 'db', 'contacts.json'),
+        JSON.stringify(contacts, null, 2),
+    )
+    return newContact
 }
 
 module.exports = {
